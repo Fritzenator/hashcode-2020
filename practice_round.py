@@ -30,13 +30,13 @@ def read_input(name: str) -> ProblemInput:
 
     name = f'practice_round_files/{name}'
 
-    with open(name + '.in', 'w') as f:
+    with open(name + '.in', 'r') as f:
         max_slices, n_pizza_types = f.readline().strip('\n').split(' ')
 
         slices_per_pizza = f.readline().strip('\n').split(' ')
         slices_per_pizza = [int(x) for x in slices_per_pizza]
 
-        return ProblemInput(max_slices, n_pizza_types, slices_per_pizza)
+        return ProblemInput(int(max_slices), int(n_pizza_types), slices_per_pizza)
 
 
 # Do not write types as numba will infer them
@@ -92,7 +92,7 @@ def write_output(name: str, input_: ProblemInput, sol: ProblemSolution):
 
 
 def main():
-    problem_names = ['a_example', 'b_small', 'c_medium', 'd_quite_big',' e_also_big']
+    problem_names = ['a_example', 'b_small', 'c_medium', 'd_quite_big', 'e_also_big']
 
     for name in problem_names:
         input_ = read_input(name)
