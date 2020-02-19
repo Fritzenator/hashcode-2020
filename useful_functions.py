@@ -1,6 +1,7 @@
 import numpy as np
 import numba
 
+
 @numba.jit(nopython=True)
 def knapsack(values, weights, max_weight):
     """
@@ -8,14 +9,14 @@ def knapsack(values, weights, max_weight):
     """
     t = np.zeros((len(values), max_weight + 1), dtype=np.float64)
 
-    # Fill-in the value table using the recurence formula
+    # Fill-in the value table using the recurrence formula
     for i in range(len(values)):
         for w in range(max_weight + 1):
-            # If weight is above the subproblem max weight, we can only not-choose
-            # Thus we take the value of the previous best solution for subproblem without
+            # If weight is above the sub-problem max weight, we can only not-choose
+            # Thus we take the value of the previous best solution for sub-problem without
             # this item
             if weights[i] > w:
-                # Check bounds. For subproblem with 0 items we must have 0 value
+                # Check bounds. For sub-problem with 0 items we must have 0 value
                 if i > 0:
                     t[i, w] = t[i - 1, w]
                 else:
@@ -23,9 +24,9 @@ def knapsack(values, weights, max_weight):
             # If we can choose, see if the choice yields a higher value
             else:
                 # If chosen the value is value of previous best with 
-                # the weight substraced plus the value of this item
+                # the weight subtracted plus the value of this item
                 value_if_chosen = t[i - 1, w - weights[i]] + values[i]
-                # Previous row, current column is the value of the subproblem
+                # Previous row, current column is the value of the sub-problem
                 # for same max weight but without this item (item not chosen)
                 value_if_ignored = t[i - 1, w]
 
@@ -37,7 +38,7 @@ def knapsack(values, weights, max_weight):
     w = max_weight
 
     for i in range(len(values) - 1, -1, -1):
-        # If we are in first row (subproblem with only one item)
+        # If we are in first row (sub-problem with only one item)
         # we need to check if the value is greater than 0
         # if it is, it means the item 0 was chosen
         if i == 0 and t[i, w] != 0:
