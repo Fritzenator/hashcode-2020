@@ -27,7 +27,7 @@ def read_input(name: str) -> ProblemInput:
     # abc = list(map(int, abc))
     # these two will be used often here
 
-    with open(name + '.in', 'w') as f:
+    with open(name + '.in', 'r') as f:
         return ProblemInput()
 
 
