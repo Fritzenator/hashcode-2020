@@ -74,7 +74,25 @@ def solve_problem_fast(param1, param2, param3):
 # return ProblemSolution(out1, out2)
 # If you use tqdm use it here, not inside solve_problem_fast
 def solve_problem(input_: ProblemInput) -> ProblemSolution:
-    return ProblemSolution()
+    remaining_libs = sorted(input_.libraries, key=lambda x: x.number_of_days_for_signup)
+    # libs_out: List[LibraryOutput]
+    libs_out = []
+    total_days = 0
+    # signup_in_progress = False
+    for lib in remaining_libs:
+        # if len(remaining_libs) == 0:
+        #     break
+        # if signup_in_progress == True:
+        #     pass
+
+        # current_lib = sorted(remaining_libs, key=lambda x: x.number_of_days_for_signup)[0]
+        total_days+=lib.number_of_days_for_signup
+        if(total_days > input_.number_of_days_total):
+            break
+        libs_out.append(LibraryOutput(lib.id_, lib.book_ids))
+        
+
+    return ProblemSolution(libs_out)
 
 
 def write_output(name: str, input_: ProblemInput, sol: ProblemSolution):
@@ -88,7 +106,7 @@ def write_output(name: str, input_: ProblemInput, sol: ProblemSolution):
 
 
 def main():
-    problem_names = ['a_example']
+    problem_names = ['a_example', 'b_read_on', 'c_incunabula', 'd_tough_choices', 'e_so_many_books', 'f_libraries_of_the_world']
 
     for name in problem_names:
         input_ = read_input(name)
@@ -109,11 +127,11 @@ def main():
 # solve_problem_fast(np.array([100]), np.array([0] * 100), np.zeros((100, 100)))
 
 # # Just to test input output works
-print(read_input('a_example'))
-solution = ProblemSolution([
-    LibraryOutput(1, [5, 2, 3]),
-    LibraryOutput(0, [0, 1, 2, 3, 4])
-])
-write_output('a_example', None, solution)
+# print(read_input('a_example'))
+# solution = ProblemSolution([
+#     LibraryOutput(1, [5, 2, 3]),
+#     LibraryOutput(0, [0, 1, 2, 3, 4])
+# ])
+# write_output('a_example', None, solution)
 
-# main()
+main()
