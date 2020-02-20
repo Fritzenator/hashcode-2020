@@ -95,7 +95,8 @@ def solve_problem(input_: ProblemInput) -> ProblemSolution:
                 book_ids_out.append(book_id)
                 shipped_books.add(book_id)
         
-        libs_out.append(LibraryOutput(lib.id_, book_ids_out))
+        if len(book_ids_out) > 0:
+            libs_out.append(LibraryOutput(lib.id_, book_ids_out))
         
 
     return ProblemSolution(libs_out)
