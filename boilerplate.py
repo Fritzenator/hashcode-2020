@@ -74,8 +74,7 @@ def solve_problem_fast(param1, param2, param3):
 # return ProblemSolution(out1, out2)
 # If you use tqdm use it here, not inside solve_problem_fast
 def solve_problem(input_: ProblemInput) -> ProblemSolution:
-    remaining_libs = sorted(input_.libraries, key=lambda x: x.number_of_days_for_signup)
-    # libs_out: List[LibraryOutput]
+    remaining_libs = sorted(input_.libraries, key=lambda x: x.number_of_days_for_signup - x.library_throughput_per_day)
     libs_out = []
     total_days = 0
     # signup_in_progress = False
