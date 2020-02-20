@@ -74,7 +74,7 @@ def solve_problem_fast(param1, param2, param3):
 # return ProblemSolution(out1, out2)
 # If you use tqdm use it here, not inside solve_problem_fast
 def solve_problem(input_: ProblemInput) -> ProblemSolution:
-    remaining_libs = sorted(input_.libraries, key=lambda x: x.number_of_days_for_signup - x.library_throughput_per_day)
+    remaining_libs = sorted(input_.libraries, key=lambda x: x.number_of_days_for_signup)
     libs_out = []
     total_days = 0
     # signup_in_progress = False
@@ -88,7 +88,8 @@ def solve_problem(input_: ProblemInput) -> ProblemSolution:
         total_days+=lib.number_of_days_for_signup
         if(total_days > input_.number_of_days_total):
             break
-        libs_out.append(LibraryOutput(lib.id_, lib.book_ids))
+        book_ids_out = sorted(lib.book_ids, key=lambda x: input_.book_scores[x], reverse = True)
+        libs_out.append(LibraryOutput(lib.id_, book_ids_out))
         
 
     return ProblemSolution(libs_out)
@@ -109,7 +110,7 @@ def main():
 
     for name in problem_names:
         input_ = read_input(name)
-
+        print(name)
         # For debugging
         if name == 'a_example':
             print('Input ', input_)
