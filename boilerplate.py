@@ -12,6 +12,8 @@ import tqdm
 
 @dataclass
 class Library:
+    id_: int
+
     number_of_books: int
     number_of_days: int
     number_of_books_shippable: int
@@ -23,10 +25,14 @@ class ProblemInput:
     book_scores: List[int]
     libraries: List[Library]
 
+@dataclass
+class LibraryOutput:
+    id_: int
+    book_ids: List[int]
 
 @dataclass
 class ProblemSolution:
-    pass
+    libraries: List[LibraryOutput]
 
 
 def read_input(name: str) -> ProblemInput:
@@ -46,7 +52,7 @@ def read_input(name: str) -> ProblemInput:
             book_ids = f.readline().strip('\n').split(' ')
             book_ids = list(map(int, book_ids))
 
-            library = Library(N, T, M, book_ids)
+            library = Library(l, N, T, M, book_ids)
 
             libraries.append(library)
 
@@ -68,11 +74,14 @@ def solve_problem(input_: ProblemInput) -> ProblemSolution:
     return ProblemSolution()
 
 
-# TODO: Code me
 def write_output(name: str, input_: ProblemInput, sol: ProblemSolution):
-    # will often use f.write() and f.writelines()
-    with open(name + '.out', 'w') as f:
-        pass
+    with open('data/out/' + name + '.out', 'w') as f:
+        f.write(str(len(sol.libraries)))
+        f.write('\n')
+        for lib in sol.libraries:
+            f.write(f'{lib.id_} {len(lib.book_ids)}\n')
+            f.write(' '.join([str(s) for s in lib.book_ids]))
+            f.write('\n')
 
 
 def main():
@@ -96,4 +105,10 @@ def main():
 # Test to see numba works
 # solve_problem_fast(np.array([100]), np.array([0] * 100), np.zeros((100, 100)))
 
+# Just to test input output works
 print(read_input('a_example'))
+solution = ProblemSolution([
+    LibraryOutput(1, [5, 2, 3]),
+    LibraryOutput(0, [0, 1, 2, 3, 4])
+])
+write_output('a_example', None, solution)
