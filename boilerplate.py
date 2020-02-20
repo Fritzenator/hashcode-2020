@@ -75,14 +75,48 @@ def write_output(name: str, input_: ProblemInput, sol: ProblemSolution):
 
 
 import heapq
+from collections import defaultdict
 
 
 def solve_problem(input_: ProblemInput) -> ProblemSolution:
     solution = []
 
     scanned_books = set()
+
+    input_.book_scores = np.asarray(input_.book_scores)
+    # Find n_uniques
+    book_counts = defaultdict(lambda: 0)
+
+    for lib in tqdm.tqdm(input_.libraries):
+        for book_id in lib.book_ids:
+            book_counts[book_id] += 1
+
+    # Potentially add + number of days to sign up
+    input_.libraries = sorted(input_.libraries, 
+                             key=lambda l: len(l.book_ids) / l.number_of_books_shippable,
+                             reverse=True)
+
+    for lib in tqdm.tqdm(input_.libraries):
+        to_remove = []
+        mean_score = input_.book_scores[lib.book_ids].mean()
+
+        for book_id in lib.book_ids:
+            if book_counts[book_id] > 1:
+                book_counts[book_id] -= 1
+
+                to_remove.append(book_id)
+
+        for tr in to_remove:
+            lib.book_ids.remove(tr)
+
+        lib.number_of_books = len(lib.book_ids)
+
+    # Sort back correctly
+    input_.libraries = sorted(input_.libraries, key=lambda l: l.id_)
+
+
     libraries_score = {
-        lib.id_: (input_.days / lib.number_of_days * lib.number_of_books / lib.number_of_days)
+        lib.id_: (lib.number_of_books_shippable * np.sum(input_.book_scores[lib.book_ids]) / lib.number_of_days)
         for lib in input_.libraries
     }
 
