@@ -69,8 +69,6 @@ def write_output(name: str, input_: ProblemInput, sol: ProblemSolution):
         f.write(str(len(sol.libraries)))
         f.write('\n')
         for lib in sol.libraries:
-
-
             f.write(f'{lib.id_} {len(lib.book_ids)}\n')
             f.write(' '.join([str(s) for s in lib.book_ids]))
             f.write('\n')
@@ -84,7 +82,7 @@ def solve_problem(input_: ProblemInput) -> ProblemSolution:
 
     scanned_books = set()
     libraries_score = {
-        lib.id_: (input_.days - lib.number_of_days) * lib.number_of_books
+        lib.id_: (input_.days / lib.number_of_days * lib.number_of_books / lib.number_of_days)
         for lib in input_.libraries
     }
 
@@ -131,9 +129,9 @@ def solve_problem(input_: ProblemInput) -> ProblemSolution:
 
 def main():
     problem_names = [
-        # 'a_example',
-        # 'b_read_on',
-        # 'c_incunabula',
+        'a_example',
+        'b_read_on',
+        'c_incunabula',
         'd_tough_choices',
         'e_so_many_books',
         'f_libraries_of_the_world'
