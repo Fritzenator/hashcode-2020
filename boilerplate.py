@@ -15,13 +15,16 @@ class Library:
     id_: int
 
     number_of_books: int
-    number_of_days: int
-    number_of_books_shippable: int
+    number_of_days_for_signup: int
+    # the number of books that can be shipped from library j
+    # to the scanning facility per day, once the library is signed up.
+    library_throughput_per_day: int
 
     book_ids: List[int]
 
 @dataclass
 class ProblemInput:
+    number_of_days_total: int
     book_scores: List[int]
     libraries: List[Library]
 
@@ -56,7 +59,7 @@ def read_input(name: str) -> ProblemInput:
 
             libraries.append(library)
 
-        return ProblemInput(book_scores, libraries)
+        return ProblemInput(D, book_scores, libraries)
 
 
 # Do not write types as numba will infer them
@@ -85,7 +88,7 @@ def write_output(name: str, input_: ProblemInput, sol: ProblemSolution):
 
 
 def main():
-    problem_names = ['a_example', 'b_easy']
+    problem_names = ['a_example']
 
     for name in problem_names:
         input_ = read_input(name)
@@ -105,10 +108,12 @@ def main():
 # Test to see numba works
 # solve_problem_fast(np.array([100]), np.array([0] * 100), np.zeros((100, 100)))
 
-# Just to test input output works
+# # Just to test input output works
 print(read_input('a_example'))
 solution = ProblemSolution([
     LibraryOutput(1, [5, 2, 3]),
     LibraryOutput(0, [0, 1, 2, 3, 4])
 ])
 write_output('a_example', None, solution)
+
+# main()
