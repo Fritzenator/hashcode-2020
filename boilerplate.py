@@ -10,10 +10,18 @@ import numba
 
 import tqdm
 
+@dataclass
+class Library:
+    number_of_books: int
+    number_of_days: int
+    number_of_books_shippable: int
+
+    book_ids: List[int]
 
 @dataclass
 class ProblemInput:
-    pass
+    book_scores: List[int]
+    libraries: List[Library]
 
 
 @dataclass
@@ -21,14 +29,28 @@ class ProblemSolution:
     pass
 
 
-# TODO: Code me
 def read_input(name: str) -> ProblemInput:
-    # abc = f.readline().strip('\n').split(' ')
-    # abc = list(map(int, abc))
-    # these two will be used often here
+    with open('data/in/' + name + '.txt', 'r') as f:
+        B, L, D = f.readline().strip('\n').split(' ')
+        B, L, D = list(map(int, [B, L, D]))
 
-    with open(name + '.in', 'r') as f:
-        return ProblemInput()
+        book_scores = f.readline().strip('\n').split(' ')
+        book_scores = list(map(int, book_scores))
+
+        libraries = []
+
+        for l in range(L):
+            N, T, M = f.readline().strip('\n').split(' ')
+            N, T, M = list(map(int, [N, T, M]))
+
+            book_ids = f.readline().strip('\n').split(' ')
+            book_ids = list(map(int, book_ids))
+
+            library = Library(N, T, M, book_ids)
+
+            libraries.append(library)
+
+        return ProblemInput(book_scores, libraries)
 
 
 # Do not write types as numba will infer them
@@ -72,4 +94,6 @@ def main():
 
 
 # Test to see numba works
-solve_problem_fast(np.array([100]), np.array([0] * 100), np.zeros((100, 100)))
+# solve_problem_fast(np.array([100]), np.array([0] * 100), np.zeros((100, 100)))
+
+print(read_input('a_example'))
