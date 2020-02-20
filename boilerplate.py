@@ -77,6 +77,7 @@ def solve_problem(input_: ProblemInput) -> ProblemSolution:
     remaining_libs = sorted(input_.libraries, key=lambda x: x.number_of_days_for_signup)
     libs_out = []
     total_days = 0
+    shipped_books = set()
     # signup_in_progress = False
     for lib in remaining_libs:
         # if len(remaining_libs) == 0:
@@ -88,7 +89,12 @@ def solve_problem(input_: ProblemInput) -> ProblemSolution:
         total_days+=lib.number_of_days_for_signup
         if(total_days > input_.number_of_days_total):
             break
-        book_ids_out = sorted(lib.book_ids, key=lambda x: input_.book_scores[x], reverse = True)
+        book_ids_out = []
+        for book_id in sorted(lib.book_ids, key=lambda x: input_.book_scores[x], reverse = True):
+            if (book_id in shipped_books) == False:
+                book_ids_out.append(book_id)
+                shipped_books.add(book_id)
+        
         libs_out.append(LibraryOutput(lib.id_, book_ids_out))
         
 
