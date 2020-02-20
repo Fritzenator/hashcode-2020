@@ -10,6 +10,7 @@ import numba
 
 import tqdm
 
+
 @dataclass
 class Library:
     id_: int
@@ -20,15 +21,19 @@ class Library:
 
     book_ids: List[int]
 
+
 @dataclass
 class ProblemInput:
+    days: int
     book_scores: List[int]
     libraries: List[Library]
+
 
 @dataclass
 class LibraryOutput:
     id_: int
     book_ids: List[int]
+
 
 @dataclass
 class ProblemSolution:
@@ -56,22 +61,7 @@ def read_input(name: str) -> ProblemInput:
 
             libraries.append(library)
 
-        return ProblemInput(book_scores, libraries)
-
-
-# Do not write types as numba will infer them
-# These will probably be some lists or nd-arrays
-# Can return multiple outputs
-@numba.jit(nopython=True)
-def solve_problem_fast(param1, param2, param3):
-    return np.array([1, 2, 3])
-
-
-# Will invoke out1, out2 = solve_problem_fast(input_.param1, input_.param2 ...)
-# return ProblemSolution(out1, out2)
-# If you use tqdm use it here, not inside solve_problem_fast
-def solve_problem(input_: ProblemInput) -> ProblemSolution:
-    return ProblemSolution()
+        return ProblemInput(int(D), book_scores, libraries)
 
 
 def write_output(name: str, input_: ProblemInput, sol: ProblemSolution):
@@ -79,13 +69,75 @@ def write_output(name: str, input_: ProblemInput, sol: ProblemSolution):
         f.write(str(len(sol.libraries)))
         f.write('\n')
         for lib in sol.libraries:
+
+
             f.write(f'{lib.id_} {len(lib.book_ids)}\n')
             f.write(' '.join([str(s) for s in lib.book_ids]))
             f.write('\n')
 
 
+import heapq
+
+
+def solve_problem(input_: ProblemInput) -> ProblemSolution:
+    solution = []
+
+    scanned_books = set()
+    libraries_score = {
+        lib.id_: (input_.days - lib.number_of_days) * lib.number_of_books
+        for lib in input_.libraries
+    }
+
+    libraries_heap = []
+
+    for lib_id, score in libraries_score.items():
+        heapq.heappush(libraries_heap, (-score, lib_id))
+
+    libraries_index = {
+        library.id_: library
+        for library in input_.libraries
+    }
+
+    d = 0
+    while d < input_.days and libraries_heap:
+        _, lib_id = heapq.heappop(libraries_heap)
+        lib_out = LibraryOutput(id_=lib_id, book_ids=[])
+        lib = libraries_index.get(lib_id)
+
+        d += lib.number_of_days
+
+        books_heap = []
+        for book_id in lib.book_ids:
+            book_score = input_.book_scores[book_id]
+            heapq.heappush(books_heap, (-book_score, book_id))
+
+        n = (input_.days - d) * lib.number_of_books_shippable
+        books_added = 0
+        while books_added < n:
+            if not books_heap:
+                break
+
+            _, book_id = heapq.heappop(books_heap)
+
+            if book_id not in scanned_books:
+                scanned_books.add(book_id)
+                lib_out.book_ids.append(book_id)
+                books_added += 1
+        if books_added > 0:
+            solution.append(lib_out)
+
+    return ProblemSolution(libraries=solution)
+
+
 def main():
-    problem_names = ['a_example', 'b_easy']
+    problem_names = [
+        # 'a_example',
+        # 'b_read_on',
+        # 'c_incunabula',
+        'd_tough_choices',
+        'e_so_many_books',
+        'f_libraries_of_the_world'
+    ]
 
     for name in problem_names:
         input_ = read_input(name)
@@ -102,13 +154,10 @@ def main():
         write_output(name, input_, sol)
 
 
-# Test to see numba works
-# solve_problem_fast(np.array([100]), np.array([0] * 100), np.zeros((100, 100)))
-
-# Just to test input output works
-print(read_input('a_example'))
-solution = ProblemSolution([
-    LibraryOutput(1, [5, 2, 3]),
-    LibraryOutput(0, [0, 1, 2, 3, 4])
-])
-write_output('a_example', None, solution)
+main()
+#
+# solution = ProblemSolution([
+#     LibraryOutput(1, [5, 2, 3]),
+#     LibraryOutput(0, [0, 1, 2, 3, 4])
+# ])
+# write_output('a_example', None, solution)
