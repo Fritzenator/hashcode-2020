@@ -79,7 +79,7 @@ def solve_problem(input_: ProblemInput) -> ProblemSolution:
     total_days = 0
     shipped_books = set()
     # signup_in_progress = False
-    for lib in remaining_libs:
+    for lib in tqdm.tqdm(remaining_libs):
         # if len(remaining_libs) == 0:
         #     break
         # if signup_in_progress == True:
@@ -90,7 +90,11 @@ def solve_problem(input_: ProblemInput) -> ProblemSolution:
         if(total_days > input_.number_of_days_total):
             break
         book_ids_out = []
+        total_possible_number_of_books = lib.library_throughput_per_day * input_.number_of_days_total - lib.number_of_days_for_signup
+
         for book_id in sorted(lib.book_ids, key=lambda x: input_.book_scores[x], reverse = True):
+            if len(book_ids_out) >= total_possible_number_of_books:
+                break         
             if (book_id in shipped_books) == False:
                 book_ids_out.append(book_id)
                 shipped_books.add(book_id)
